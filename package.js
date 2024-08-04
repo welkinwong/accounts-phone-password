@@ -15,7 +15,7 @@ Package.onUse(api => {
   api.versionsFrom(['3.0']);
   api.use('ecmascript');
   api.use('typescript');
-  api.use('zodern:types');
+  api.use('zodern:types@1.0.13');
   api.use('check');
   api.use('accounts-base', ['client', 'server']);
   // Export Accounts (etc) to packages using this one.
