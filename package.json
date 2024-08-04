@@ -1,0 +1,7 @@
+{
+  "name": "accounts-phone-password",
+  "devDependencies": {
+    "@types/bcrypt": "^5.0.2",
+    "@types/meteor": "^2.9.8"
+  }
+}
