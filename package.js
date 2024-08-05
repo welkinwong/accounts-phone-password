@@ -1,14 +1,14 @@
 Package.describe({
   name: 'welkinwong:accounts-phone-password',
-  version: '1.0.0',
+  version: '1.0.1',
   summary: 'A login service based on mobile phone number for Meteor 3.0',
   git: 'https://github.com/welkinwong/accounts-phone-password.git',
-  documentation: 'README.md',
+  documentation: 'README.md'
 });
 
 Npm.depends({
   bcrypt: '5.1.1',
-  phone: '3.1.49',
+  phone: '3.1.49'
 });
 
 Package.onUse(api => {
