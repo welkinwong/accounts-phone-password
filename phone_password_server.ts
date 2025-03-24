@@ -510,12 +510,6 @@ await Meteor.users.createIndexAsync('phone.number', {
   sparse: true,
 });
 
-// @ts-expect-error
-await Meteor.users.createIndexAsync('services.phone.verify.code', {
-  unique: true,
-  sparse: true,
-});
-
 /*** Control published data *********/
 Meteor.startup(function () {
   /** Publish phones to the client **/
