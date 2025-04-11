@@ -67,6 +67,14 @@ Request a new verification code. create user if not exist
 Accounts.requestPhoneVerification(phone: string, callback: (error: Meteor.Error) => void)
 ```
 
+### verifyCode
+
+Check if the code is correct
+
+```ts
+Accounts.verifyCode(phone: string, code: string, callback?: (error: Meteor.Error) => void)
+```
+
 ### verifyPhone
 
 Marks the user's phone as verified. Optional change passwords, Logs the user in afterwards

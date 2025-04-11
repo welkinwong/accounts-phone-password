@@ -349,6 +349,26 @@ Meteor.methods({
   },
 });
 
+Meteor.methods({
+  verifyCode: async function (phone, code) {
+    check(code, String);
+    check(phone, String);
+
+    if (!code) throw new Meteor.Error(403, 'Code is must be provided to method');
+
+    // Change phone format to international SMS format
+    phone = normalizePhone(phone);
+
+    var user = await Meteor.users.findOneAsync({ 'phone.number': phone });
+    if (!user) throw new Meteor.Error(403, 'Not a valid phone');
+
+    // Verify code is accepted or master code
+    if (!user.services!.phone?.verify?.code || (user.services!.phone.verify.code != code && !isMasterCode(code))) {
+      throw new Meteor.Error(403, 'Not a valid code');
+    }
+  },
+});
+
 // Take code from sendVerificationPhone SMS, mark the phone as verified,
 // Change password if needed
 // and log them in.
@@ -361,9 +381,7 @@ Meteor.methods({
       check(code, String);
       check(phone, String);
 
-      if (!code) {
-        throw new Meteor.Error(403, 'Code is must be provided to method');
-      }
+      if (!code) throw new Meteor.Error(403, 'Code is must be provided to method');
 
       // Change phone format to international SMS format
       phone = normalizePhone(phone);
@@ -372,12 +390,7 @@ Meteor.methods({
       if (!user) throw new Meteor.Error(403, 'Not a valid phone');
 
       // Verify code is accepted or master code
-      if (
-        !user.services!.phone ||
-        !user.services!.phone.verify ||
-        !user.services!.phone.verify.code ||
-        (user.services!.phone.verify.code != code && !isMasterCode(code))
-      ) {
+      if (!user.services!.phone?.verify?.code || (user.services!.phone.verify.code != code && !isMasterCode(code))) {
         throw new Meteor.Error(403, 'Not a valid code');
       }
 

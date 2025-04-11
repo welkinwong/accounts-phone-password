@@ -56,6 +56,21 @@ Accounts.requestPhoneVerification = (phone, callback) => {
   Accounts.connection.call('requestPhoneVerification', phone, callback);
 };
 
+/**
+ * @summary
+ * @locus Client
+ * @param phone - The phone number we want to verify.
+ * @param code - The code retrieved in the SMS.
+ * @param [callback] Optional callback. Called with no arguments on success, or with a single `Error` argument on failure.
+ */
+Accounts.verifyCode = (phone, code, callback) => {
+  check(code, String);
+  check(phone, String);
+
+  // @ts-expect-error
+  Accounts.connection.call('verifyCode', phone, code, callback);
+};
+
 // Verify phone number
 // Based on a code ( received by SMS ) originally created by
 // Accounts.verifyPhone, optionally change password and then logs in the matching user.

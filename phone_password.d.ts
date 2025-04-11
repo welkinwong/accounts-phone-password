@@ -89,6 +89,8 @@ declare module 'meteor/accounts-base' {
 
     function requestPhoneVerification(phone: string, callback?: MethodCallback): void;
 
+    function verifyCode(phone: string, code: string, callback: MethodCallback): void;
+
     function verifyPhone(phone: string, code: string, newPassword: string, callback: MethodCallback): void;
 
     function isPhoneVerified(): boolean;

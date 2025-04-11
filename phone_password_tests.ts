@@ -27,6 +27,50 @@ if (Meteor.isClient)
       });
     });
 
+    Tinytest.add('accounts-phone-password - verifyCode - notPhone', (test, onComplete) => {
+      test.throws(() => {
+        Accounts.verifyCode();
+      });
+    });
+
+    Tinytest.add('accounts-phone-password - verifyCode - notCode', (test, onComplete) => {
+      test.throws(() => {
+        Accounts.verifyCode(PHONE_NUMBER);
+      });
+    });
+
+    Tinytest.addAsync('accounts-phone-password - verifyCode - errCode', (test, onComplete) => {
+      Accounts.requestPhoneVerification(PHONE_NUMBER, () => {
+        Accounts.verifyCode(PHONE_NUMBER, '1', async error => {
+          if (error) {
+            test.expect_fail();
+            test.fail(error);
+          } else {
+            test.fail();
+          }
+
+          await Meteor.callAsync('removeUserAsync', PHONE_NUMBER);
+          onComplete();
+        });
+      });
+    });
+
+    Tinytest.addAsync('accounts-phone-password - verifyCode - verifyCode', (test, onComplete) => {
+      Accounts.requestPhoneVerification(PHONE_NUMBER, async () => {
+        const user = await Meteor.callAsync('findUserAsync', PHONE_NUMBER);
+
+        Accounts.verifyCode(PHONE_NUMBER, user.services.phone.verify.code, async error => {
+          if (error) {
+            test.fail(error);
+          } else {
+            await Meteor.callAsync('removeUserAsync', PHONE_NUMBER);
+          }
+
+          onComplete();
+        });
+      });
+    });
+
     Tinytest.add('accounts-phone-password - verifyPhone - notPhone', (test, onComplete) => {
       test.throws(() => {
         Accounts.verifyPhone();
