@@ -97,9 +97,9 @@ declare module 'meteor/accounts-base' {
 
     function changePassword(oldPassword: string, newPassword: string, callback: MethodCallback): void;
 
-    function sendSms(phone: string, code: string): void;
+    function sendSms(phone: string, code: string): Promise<void> | void;
 
-    function sendPhoneVerificationCodeAsync(userId: string, phone?: string): void;
+    function sendPhoneVerificationCodeAsync(userId: string, phone?: string): Promise<void>;
   }
 }
 

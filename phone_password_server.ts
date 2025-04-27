@@ -247,10 +247,10 @@ Meteor.methods({
 /**
  * @summary Send an SMS with a code the user can use verify their phone number with.
  * @locus Server
- * @param {String} userId The id of the user to send email to.
- * @param {String} [phone] Optional. Which phone of the user's to send the SMS to. This phone must be in the user's `phones` list. Defaults to the first unverified phone in the list.
+ * @param userId The id of the user to send email to.
+ * @param phone Optional. Which phone of the user's to send the SMS to. This phone must be in the user's `phones` list. Defaults to the first unverified phone in the list.
  */
-Accounts.sendPhoneVerificationCodeAsync = async (userId, phone) => {
+Accounts.sendPhoneVerificationCodeAsync = async (userId: string, phone?: string) => {
   // XXX Also generate a link using which someone can delete this
   // account if they own said number but weren't those who created
   // this account.
@@ -313,7 +313,7 @@ Accounts.sendPhoneVerificationCodeAsync = async (userId, phone) => {
 
   await Meteor.users.updateAsync({ _id: userId }, { $set: { 'services.phone.verify': verifyObject } });
 
-  Accounts.sendSms(phone, verifyObject.code);
+  await Accounts.sendSms(phone, verifyObject.code);
 };
 
 // Send SMS with code to user.
@@ -343,7 +343,7 @@ Meteor.methods({
 
     try {
       await Accounts.sendPhoneVerificationCodeAsync(userId, phone);
-    } catch (error) {
+    } catch (error: any) {
       throw new Meteor.Error(500, error.message);
     }
   },
