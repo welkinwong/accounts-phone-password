@@ -4,6 +4,7 @@ import { hash as bcryptHash, compare as bcryptCompare } from 'bcrypt';
 import { Accounts } from 'meteor/accounts-base';
 import { Match, check } from 'meteor/check';
 import { phone } from 'phone';
+import type { FieldSelector, HashPassword } from './phone_password_types';
 
 /**
  * send sms

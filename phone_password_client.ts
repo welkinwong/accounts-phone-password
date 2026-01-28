@@ -2,6 +2,7 @@ import { Meteor } from 'meteor/meteor';
 import { Accounts } from 'meteor/accounts-base';
 import { check } from 'meteor/check';
 import { SHA256 } from 'meteor/sha';
+import type { LoginWithPhoneSelector, MethodCallback } from './phone_password_types';
 
 // Used in the various functions below to handle errors consistently
 const reportError = (error: Error, callback?: (error: any) => void) => {
@@ -21,7 +22,11 @@ const reportError = (error: Error, callback?: (error: any) => void) => {
  * @param   password The user's password.
  * @param   [callback] Optional callback. Called with no arguments on success, or with a single `Error` argument on failure.
  */
-Meteor.loginWithPhoneAndPassword = (selector, password, callback) => {
+Meteor.loginWithPhoneAndPassword = (
+  selector: LoginWithPhoneSelector,
+  password: string,
+  callback?: MethodCallback<void>
+) => {
   if (typeof selector === 'string') selector = { phone: selector };
 
   Accounts.callLoginMethod({
@@ -83,7 +88,12 @@ Accounts.verifyCode = (phone, code, callback) => {
  * @param newPassword, Optional, A new password for the user. This is __not__ sent in plain text over the wire.
  * @param [callback] Optional callback. Called with no arguments on success, or with a single `Error` argument on failure.
  */
-Accounts.verifyPhone = (phone, code, newPassword, callback) => {
+Accounts.verifyPhone = (
+  phone,
+  code,
+  newPassword?: string | MethodCallback<void>,
+  callback?: MethodCallback<void>
+) => {
   check(code, String);
   check(phone, String);
   check(newPassword, Match.Maybe(Match.OneOf(String, Function)));

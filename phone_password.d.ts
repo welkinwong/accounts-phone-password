@@ -1,40 +1,39 @@
-type MethodCallback = (
-  error?:
-    | import('meteor/meteor').global_Error
-    | import('meteor/meteor').Meteor.Error
-    | import('meteor/meteor').Meteor.TypedError,
-  result?: any
-) => void;
+import type {
+  FieldSelector,
+  HashPassword,
+  LoginWithPhoneSelector,
+  MethodCallback,
+  MethodError,
+} from './phone_password_types';
 
 declare module 'meteor/meteor' {
   namespace Meteor {
     interface User {
-      phone: {
+      phone?: {
         number: string;
         verified: boolean;
       };
-      services?: {
-        phone?: {
-          bcrypt?: string;
-          verify?: {
-            numOfRetries: number;
-            code: string;
-            phone: string;
-            lastRetry: Date;
-          };
+    }
+
+    interface UserServices {
+      phone?: {
+        bcrypt?: string;
+        verify?: {
+          numOfRetries: number;
+          code: string;
+          phone: string;
+          lastRetry: Date;
         };
       };
     }
 
     function loginWithPhoneAndPassword(
-      user: { phone: string } | { id: string } | string,
+      user: LoginWithPhoneSelector,
       password: string,
-      callback?: MethodCallback
+      callback?: MethodCallback<void>
     ): void;
   }
 }
-
-type FieldSelector = { fields?: import('meteor/mongo').Mongo.FieldSpecifier | undefined };
 
 declare module 'meteor/accounts-base' {
   namespace Accounts {
@@ -60,7 +59,7 @@ declare module 'meteor/accounts-base' {
     function _checkPhonePasswordAsync(
       user: import('meteor/meteor').Meteor.User,
       password: string | HashPassword
-    ): Promise<{ userId: string; error?: any }>;
+    ): Promise<{ userId: string; error?: MethodError }>;
 
     function _handleError(message: string): never;
 
@@ -73,12 +72,12 @@ declare module 'meteor/accounts-base' {
     ): string;
 
     function _loginMethod(
-      methodInvocation: any,
+      methodInvocation: unknown,
       methodName: string,
-      methodArgs: any[],
+      methodArgs: unknown[],
       type: string,
       fn: () => void
-    ): Promise<any>;
+    ): Promise<unknown>;
 
     function _clearAllLoginTokens(userId: string): Promise<void>;
 
@@ -87,20 +86,24 @@ declare module 'meteor/accounts-base' {
       user: import('meteor/meteor').Meteor.User
     ): Promise<string>;
 
-    function requestPhoneVerification(phone: string, callback?: MethodCallback): void;
+    function requestPhoneVerification(phone: string, callback?: MethodCallback<void>): void;
 
-    function verifyCode(phone: string, code: string, callback: MethodCallback): void;
+    function verifyCode(phone: string, code: string, callback?: MethodCallback<void>): void;
 
-    function verifyPhone(phone: string, code: string, newPassword: string, callback: MethodCallback): void;
+    function verifyPhone(phone: string, code: string, callback?: MethodCallback<void>): void;
+    function verifyPhone(
+      phone: string,
+      code: string,
+      newPassword: string,
+      callback?: MethodCallback<void>
+    ): void;
 
     function isPhoneVerified(): boolean;
 
-    function changePassword(oldPassword: string, newPassword: string, callback: MethodCallback): void;
+    function changePassword(oldPassword: string, newPassword: string, callback?: MethodCallback<void>): void;
 
     function sendSms(phone: string, code: string): Promise<void> | void;
 
     function sendPhoneVerificationCodeAsync(userId: string, phone?: string): Promise<void>;
   }
 }
-
-type HashPassword = { digest: string; algorithm: string };
